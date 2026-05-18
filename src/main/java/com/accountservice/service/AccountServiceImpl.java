@@ -10,7 +10,9 @@ import com.accountservice.repo.AccountRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -23,6 +25,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponseDto createAccount(
+
+
+
             AccountRequestDto accountRequestDto
     ) {
 
@@ -42,8 +47,9 @@ public class AccountServiceImpl implements AccountService {
             throw new RuntimeException("PAN already exists");
         }
 
-        Account account = new Account();
+        String accountNumber = generateAccountNumber();
 
+        Account account = new Account(accountNumber);
         account.setFirstName(accountRequestDto.getFirstName());
         account.setMiddleName(accountRequestDto.getMiddleName());
         account.setLastName(accountRequestDto.getLastName());
@@ -337,5 +343,28 @@ public class AccountServiceImpl implements AccountService {
         return pan.substring(0, 5) +
                 "****" +
                 pan.substring(9);
+    }
+
+    private String generateAccountNumber() {
+
+        String accountNumber;
+
+        do {
+
+            int year = Year.now().getValue();
+
+            Random random = new Random();
+
+            int randomNumber =
+                    100000 + random.nextInt(900000);
+
+            accountNumber =
+                    "ACC" + year + randomNumber;
+
+        } while (
+                accountRepository.existsByAccountNumber(accountNumber)
+        );
+
+        return accountNumber;
     }
 }

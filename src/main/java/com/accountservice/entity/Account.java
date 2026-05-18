@@ -35,6 +35,9 @@ public class Account {
     private Long id;
 
     @Getter
+    private String accountNumber;
+
+    @Getter
     @Setter
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 50)
@@ -130,6 +133,10 @@ public class Account {
     public Account() {
     }
 
+    public Account(String accountNumber){
+        this.accountNumber = accountNumber;
+    }
+
     public Account(Long id,
                    String firstName,
                    String middleName,
@@ -158,4 +165,5 @@ public class Account {
         this.creditLimit = creditLimit;
         this.active = active;
     }
+
 }
