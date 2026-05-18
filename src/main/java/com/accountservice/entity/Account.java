@@ -1,11 +1,6 @@
 package com.accountservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -29,6 +24,12 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Getter
+    @Setter
+    @Column(unique = true, nullable = false, updatable = false)
+    private String accountNumber;
+
 
     @Getter
     @Setter
@@ -71,6 +72,19 @@ public class Account {
     @Column(unique = true)
     private String email;
 
+    @Getter
+    @Setter
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
+
+    @Getter
+    @Setter
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
+
     // Permanent fields - no setters
     @Getter
     @Pattern(regexp = "^[0-9]{12}$", message = "Aadhar number must be 12 digits")
@@ -82,10 +96,12 @@ public class Account {
     @Column(unique = true, nullable = false, updatable = false)
     private String panNumber;
 
+
     public Account() {
     }
 
     public Account(Long id,
+                   String accountNumber,
                    String firstName,
                    String middleName,
                    String lastName,
@@ -93,8 +109,9 @@ public class Account {
                    int age,
                    BigDecimal balance,
                    String email,
-                   String aadharNumber,
-                   String panNumber) {
+                   AccountType accountType,
+                   AccountStatus accountStatus
+                   ) {
 
         this.id = id;
         this.firstName = firstName;
@@ -104,6 +121,14 @@ public class Account {
         this.age = age;
         this.balance = balance;
         this.email = email;
+        this.accountType=accountType;
+        this.accountStatus=accountStatus;
+    }
+
+    public Account(String accountNumber,
+                   String aadharNumber,
+                   String panNumber) {
+        this.accountNumber=accountNumber;
         this.aadharNumber = aadharNumber;
         this.panNumber = panNumber;
     }
