@@ -51,19 +51,7 @@ public class AccountResponseDto {
     public AccountResponseDto() {
     }
 
-    public AccountResponseDto(Long id,
-                              String firstName,
-                              String middleName,
-                              String lastName,
-                              String mobileNumber,
-                              int age,
-                              BigDecimal balance,
-                              String email,
-                              String maskedAadhar,
-                              String maskedPan,
-                              AccountType accountType,
-                              BigDecimal creditLimit,
-                              boolean active) {
+    public AccountResponseDto(Long id, String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String maskedAadhar, String maskedPan, AccountType accountType, BigDecimal creditLimit, boolean active) {
 
         this.id = id;
         this.firstName = firstName;

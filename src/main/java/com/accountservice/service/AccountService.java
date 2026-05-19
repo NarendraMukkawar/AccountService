@@ -15,6 +15,8 @@ public interface AccountService {
     // Find Account Operations
     AccountResponseDto getAccountById(Long accountId);
 
+    AccountResponseDto getAccountByAccountNumber(String accountNumber);
+
     AccountResponseDto getAccountByEmail(String email);
 
     AccountResponseDto getAccountByMobileNumber(String mobileNumber);
@@ -26,32 +28,19 @@ public interface AccountService {
     List<AccountResponseDto> getAllAccounts();
 
     // Update Operations
-    AccountResponseDto updatePersonalDetails(
-            Long accountId,
-            UpdateAccountDto updateAccountDto
-    );
+    AccountResponseDto updatePersonalDetails(String accountNumber, UpdateAccountDto updateAccountDto);
 
     // Banking Operations
-    AccountResponseDto depositAmount(
-            Long accountId,
-            BigDecimal amount
-    );
+    AccountResponseDto depositAmount(String accountNumber, BigDecimal amount);
 
-    AccountResponseDto withdrawAmount(
-            Long accountId,
-            BigDecimal amount
-    );
+    AccountResponseDto withdrawAmount(String accountNumber, BigDecimal amount);
 
-    void transferAmount(
-            Long senderAccountId,
-            Long receiverAccountId,
-            BigDecimal amount
-    );
+    void transferAmount(String senderAccountNumber, String receiverAccountNumber, BigDecimal amount);
 
     // Account Status Operations
-    void activateAccount(Long accountId);
+    void activateAccount(String accountNumber);
 
-    void deactivateAccount(Long accountId);
+    void deactivateAccount(String accountNumber);
 
     // Validation Operations
     boolean existsByEmail(String email);
@@ -63,11 +52,8 @@ public interface AccountService {
     boolean existsByPanNumber(String panNumber);
 
     // Business Validation
-    boolean canWithdraw(
-            Long accountId,
-            BigDecimal amount
-    );
+    boolean canWithdraw(String accountNumber, BigDecimal amount);
 
     // Balance Operations
-    BigDecimal checkBalance(Long accountId);
+    BigDecimal checkBalance(String accountNumber);
 }

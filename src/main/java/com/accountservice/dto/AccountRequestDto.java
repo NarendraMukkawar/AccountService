@@ -56,17 +56,7 @@ public class AccountRequestDto {
     public AccountRequestDto() {
     }
 
-    public AccountRequestDto(String firstName,
-                             String middleName,
-                             String lastName,
-                             String mobileNumber,
-                             int age,
-                             BigDecimal balance,
-                             String email,
-                             String aadharNumber,
-                             String panNumber,
-                             AccountType accountType,
-                             BigDecimal creditLimit) {
+    public AccountRequestDto(String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType, BigDecimal creditLimit) {
 
         this.firstName = firstName;
         this.middleName = middleName;
