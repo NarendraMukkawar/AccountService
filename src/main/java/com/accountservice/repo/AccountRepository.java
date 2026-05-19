@@ -16,6 +16,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByPanNumber(String panNumber);
 
+    Optional<Account> findByAccountNumber(String accountNumber);
+
     boolean existsByEmail(String email);
 
     boolean existsByMobileNumber(String mobileNumber);
@@ -25,4 +27,5 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByPanNumber(String panNumber);
 
     boolean existsByAccountNumber(String accountNumber);
+
 }

@@ -58,10 +58,7 @@ public class Account {
 
     @Getter
     @Setter
-    @Pattern(
-            regexp = "^[0-9]{10}$",
-            message = "Mobile number must be 10 digits"
-    )
+    @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits")
     @Column(unique = true, nullable = false)
     private String mobileNumber;
 
@@ -73,11 +70,6 @@ public class Account {
 
     @Getter
     @Setter
-    @DecimalMin(
-            value = "0.0",
-            inclusive = true,
-            message = "Balance cannot be negative"
-    )
     @Column(nullable = false)
     private BigDecimal balance;
 
@@ -91,19 +83,13 @@ public class Account {
     // Permanent fields - no setters
     @Getter
     @Setter
-    @Pattern(
-            regexp = "^[0-9]{12}$",
-            message = "Aadhar number must be 12 digits"
-    )
+    @Pattern(regexp = "^[0-9]{12}$", message = "Aadhar number must be 12 digits")
     @Column(unique = true, nullable = false, updatable = false)
     private String aadharNumber;
 
     @Getter
     @Setter
-    @Pattern(
-            regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$",
-            message = "Invalid PAN format"
-    )
+    @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$", message = "Invalid PAN format")
     @Column(unique = true, nullable = false, updatable = false)
     private String panNumber;
 
@@ -117,12 +103,14 @@ public class Account {
     // For CURRENT account overdraft
     @Getter
     @Setter
-    @DecimalMin(
-            value = "0.0",
-            inclusive = true,
-            message = "Credit limit cannot be negative"
-    )
+    @DecimalMin(value = "0.0", inclusive = true, message = "Credit limit cannot be negative")
     private BigDecimal creditLimit;
+
+    @Getter
+    @Setter
+    @DecimalMin(value = "0.0", inclusive = true, message = "Debit limit cannot be negative")
+    private BigDecimal debitLimit;
+
 
     // Soft delete / account status
     @Getter
@@ -133,23 +121,11 @@ public class Account {
     public Account() {
     }
 
-    public Account(String accountNumber){
+    public Account(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
-    public Account(Long id,
-                   String firstName,
-                   String middleName,
-                   String lastName,
-                   String mobileNumber,
-                   int age,
-                   BigDecimal balance,
-                   String email,
-                   String aadharNumber,
-                   String panNumber,
-                   AccountType accountType,
-                   BigDecimal creditLimit,
-                   boolean active) {
+    public Account(Long id, String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType, BigDecimal creditLimit, boolean active) {
 
         this.id = id;
         this.firstName = firstName;

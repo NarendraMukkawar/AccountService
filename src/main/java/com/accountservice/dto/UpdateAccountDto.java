@@ -15,6 +15,9 @@ public class UpdateAccountDto {
 
     private String lastName;
 
+    @Getter
+    private String accountNumber;
+
     @Pattern(regexp = "^[0-9]{10}$")
     private String mobileNumber;
 
@@ -24,11 +27,7 @@ public class UpdateAccountDto {
     public UpdateAccountDto() {
     }
 
-    public UpdateAccountDto(String firstName,
-                            String middleName,
-                            String lastName,
-                            String mobileNumber,
-                            String email) {
+    public UpdateAccountDto(String firstName, String middleName, String lastName, String mobileNumber, String email) {
 
         this.firstName = firstName;
         this.middleName = middleName;
