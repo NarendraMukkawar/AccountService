@@ -7,6 +7,7 @@ import com.accountservice.entity.Account;
 import com.accountservice.enums.AccountType;
 import com.accountservice.repo.AccountRepository;
 
+import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.repository.core.support.RepositoryMethodInvocationListener;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,8 @@ public class AccountServiceImpl implements AccountService {
         String accountNumber = generateAccountNumber();
 
         Account account = new Account(accountNumber);
+
+
         account.setFirstName(accountRequestDto.getFirstName());
         account.setMiddleName(accountRequestDto.getMiddleName());
         account.setLastName(accountRequestDto.getLastName());
@@ -61,18 +64,23 @@ public class AccountServiceImpl implements AccountService {
         account.setAadharNumber(accountRequestDto.getAadharNumber());
         account.setPanNumber(accountRequestDto.getPanNumber());
 
-        // Current Account Credit Limit
-        if (accountRequestDto.getAccountType() == AccountType.CURRENT) {
-
-            BigDecimal creditLimit = accountRequestDto.getCreditLimit();
-
-            if (creditLimit == null || creditLimit.compareTo(BigDecimal.valueOf(1000)) < 0) {
-
-                throw new RuntimeException("Current account must have minimum credit limit of 1000");
-            }
-
-            account.setCreditLimit(creditLimit);
+        if(accountRequestDto.getAccountType() == AccountType.CURRENT){
+            account.setCreditLimit(BigDecimal.valueOf(50000));
         }
+
+        // Current Account Credit Limit
+//        if (accountRequestDto.getAccountType() == AccountType.CURRENT) {
+
+//            BigDecimal creditLimit = accountRequestDto.getCreditLimit();
+
+//            if (creditLimit == null || creditLimit.compareTo(BigDecimal.valueOf(1000)) < 0) {
+//
+//                throw new RuntimeException("Current account must have minimum credit limit of 1000");
+//            }
+//
+//            account.setCreditLimit(creditLimit);
+
+//        }
 
         accountRepository.save(account);
 
@@ -192,6 +200,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public void transferAmount(String senderAccountNumber, String receiverAccountNumber, BigDecimal amount) {
 
         withdrawAmount(senderAccountNumber, amount);
@@ -265,8 +274,6 @@ public class AccountServiceImpl implements AccountService {
 
             account.setDebitLimit(BigDecimal.valueOf(500000));
 
-            account.setCreditLimit(BigDecimal.valueOf(50000));
-
             BigDecimal allowedAmount = account.getCreditLimit().add(account.getBalance());
 
             if (amount.compareTo(allowedAmount) > 0) {
@@ -293,7 +300,7 @@ public class AccountServiceImpl implements AccountService {
     // DTO Mapper
     private AccountResponseDto mapToResponseDto(Account account) {
 
-        return new AccountResponseDto(account.getId(), account.getFirstName(), account.getMiddleName(), account.getLastName(), account.getMobileNumber(), account.getAge(), account.getBalance(), account.getEmail(), maskAadhar(account.getAadharNumber()), maskPan(account.getPanNumber()), account.getAccountType(), account.getCreditLimit(), account.isActive());
+        return new AccountResponseDto(account.getId(), account.getAccountNumber(),  account.getFirstName(), account.getMiddleName(), account.getLastName(), account.getMobileNumber(), account.getAge(), account.getBalance(), account.getEmail(), maskAadhar(account.getAadharNumber()), maskPan(account.getPanNumber()), account.getAccountType(), account.getCreditLimit(), account.isActive());
     }
 
     private String maskAadhar(String aadhar) {

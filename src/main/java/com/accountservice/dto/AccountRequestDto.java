@@ -50,13 +50,13 @@ public class AccountRequestDto {
     @Setter
     private AccountType accountType;
 
-    @Setter
-    private BigDecimal creditLimit;
+//    @Setter
+//    private BigDecimal creditLimit;
 
     public AccountRequestDto() {
     }
 
-    public AccountRequestDto(String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType, BigDecimal creditLimit) {
+    public AccountRequestDto(String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType) {
 
         this.firstName = firstName;
         this.middleName = middleName;
@@ -68,6 +68,6 @@ public class AccountRequestDto {
         this.aadharNumber = aadharNumber;
         this.panNumber = panNumber;
         this.accountType = accountType;
-        this.creditLimit = creditLimit;
+//        this.creditLimit = creditLimit;
     }
 }
