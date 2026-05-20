@@ -11,13 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -103,7 +97,6 @@ public class Account {
     // For CURRENT account overdraft
     @Getter
     @Setter
-    @DecimalMin(value = "0.0", inclusive = true, message = "Credit limit cannot be negative")
     private BigDecimal creditLimit;
 
     @Getter
@@ -125,7 +118,7 @@ public class Account {
         this.accountNumber = accountNumber;
     }
 
-    public Account(Long id, String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType, BigDecimal creditLimit, boolean active) {
+    public Account(Long id, String firstName, String middleName, String lastName, String mobileNumber, int age, BigDecimal balance, String email, String aadharNumber, String panNumber, AccountType accountType, boolean active) {
 
         this.id = id;
         this.firstName = firstName;
@@ -138,7 +131,7 @@ public class Account {
         this.aadharNumber = aadharNumber;
         this.panNumber = panNumber;
         this.accountType = accountType;
-        this.creditLimit = creditLimit;
+//        this.creditLimit = creditLimit;
         this.active = active;
     }
 
