@@ -98,7 +98,7 @@ public class AccountController {
     @PatchMapping("/{accountNumber}/activate")
     public void activateAccount(@PathVariable String accountNumber) {
         accountService.activateAccount(accountNumber);
-    }
+    }   
 
     // Deactivate Account
     @PatchMapping("/{accountNumber}/deactivate")
