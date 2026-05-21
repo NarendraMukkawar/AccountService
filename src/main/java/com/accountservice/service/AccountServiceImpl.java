@@ -22,11 +22,9 @@ import java.util.Random;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-//    private final RepositoryMethodInvocationListener repositoryMethodInvocationListener;
 
     public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-//        this.repositoryMethodInvocationListener = repositoryMethodInvocationListener;
     }
 
     @Override
@@ -64,23 +62,9 @@ public class AccountServiceImpl implements AccountService {
         account.setAadharNumber(accountRequestDto.getAadharNumber());
         account.setPanNumber(accountRequestDto.getPanNumber());
 
-        if(accountRequestDto.getAccountType() == AccountType.CURRENT){
+        if (accountRequestDto.getAccountType() == AccountType.CURRENT) {
             account.setCreditLimit(BigDecimal.valueOf(50000));
         }
-
-        // Current Account Credit Limit
-//        if (accountRequestDto.getAccountType() == AccountType.CURRENT) {
-
-//            BigDecimal creditLimit = accountRequestDto.getCreditLimit();
-
-//            if (creditLimit == null || creditLimit.compareTo(BigDecimal.valueOf(1000)) < 0) {
-//
-//                throw new RuntimeException("Current account must have minimum credit limit of 1000");
-//            }
-//
-//            account.setCreditLimit(creditLimit);
-
-//        }
 
         accountRepository.save(account);
 
@@ -145,14 +129,11 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Account Not Found!"));
         if (account.getEmail().equals(updateAccountDto.getEmail()) || account.getMobileNumber().equals(updateAccountDto.getMobileNumber())) {
             return getAccountResponseDto(updateAccountDto, account);
-        }
-        else if (existsByEmail(updateAccountDto.getEmail())) {
+        } else if (existsByEmail(updateAccountDto.getEmail())) {
             throw new RuntimeException("Email already exists");
-        }
-        else if (existsByMobileNumber(updateAccountDto.getMobileNumber())) {
+        } else if (existsByMobileNumber(updateAccountDto.getMobileNumber())) {
             throw new RuntimeException("Mobile number already exists");
-        }
-        else{
+        } else {
             return getAccountResponseDto(updateAccountDto, account);
         }
     }
@@ -175,28 +156,46 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponseDto depositAmount(String accountNumber, BigDecimal amount) {
 
         Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Account not found"));
-
-        account.setBalance(account.getBalance().add(amount));
-
-        accountRepository.save(account);
-
-        return mapToResponseDto(account);
+        if (account.getAccountType() == AccountType.SAVINGS) {
+            account.setBalance(account.getBalance().add(amount));
+            accountRepository.save(account);
+            return mapToResponseDto(account);
+        } else {
+            account.setBalance(account.getBalance().add(amount));
+            // Restore credit limit properly
+            if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+                account.setCreditLimit(new BigDecimal("50000").add(account.getBalance()));
+            } else {
+                // Max limit restored
+                account.setCreditLimit(new BigDecimal("50000"));
+            }
+            accountRepository.save(account);
+            return mapToResponseDto(account);
+        }
     }
 
     @Override
     public AccountResponseDto withdrawAmount(String accountNumber, BigDecimal amount) {
 
+        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Account not found"));
         if (!canWithdraw(accountNumber, amount)) {
             throw new RuntimeException("Insufficient balance");
         }
 
-        Account account = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new RuntimeException("Account not found"));
+        if ((account.getAccountType() == AccountType.CURRENT) && (account.getBalance().compareTo(amount) < 0)) {
+            account.setBalance(account.getBalance().subtract(amount));
+            account.setCreditLimit(new BigDecimal("50000").add(account.getBalance()));
+            accountRepository.save(account);
 
-        account.setBalance(account.getBalance().subtract(amount));
+            return mapToResponseDto(account);
+        } else {
 
-        accountRepository.save(account);
+            account.setBalance(account.getBalance().subtract(amount));
 
-        return mapToResponseDto(account);
+            accountRepository.save(account);
+
+            return mapToResponseDto(account);
+        }
     }
 
     @Override
@@ -274,15 +273,32 @@ public class AccountServiceImpl implements AccountService {
 
             account.setDebitLimit(BigDecimal.valueOf(500000));
 
-            BigDecimal allowedAmount = account.getCreditLimit().add(account.getBalance());
+            BigDecimal balance = account.getBalance();
+            BigDecimal creditLimit = account.getCreditLimit();
 
-            if (amount.compareTo(allowedAmount) > 0) {
-                throw new RuntimeException("Insufficient Balance!");
+            // If balance is positive
+            if (balance.compareTo(BigDecimal.ZERO) >= 0) {
+
+                BigDecimal usableAmount = balance.add(creditLimit);
+
+                if (amount.compareTo(usableAmount) > 0) {
+                    throw new RuntimeException("Insufficient Balance!");
+                }
+
+            } else {
+
+                // If balance already negative,
+                // only remaining creditLimit can be used
+
+                if (amount.compareTo(creditLimit) > 0) {
+                    throw new RuntimeException("Insufficient Balance!");
+                }
             }
 
             if (amount.compareTo(account.getDebitLimit()) > 0) {
                 throw new RuntimeException("Amount Exceeds Limit!");
             }
+
             return true;
         }
 
@@ -300,7 +316,7 @@ public class AccountServiceImpl implements AccountService {
     // DTO Mapper
     private AccountResponseDto mapToResponseDto(Account account) {
 
-        return new AccountResponseDto(account.getId(), account.getAccountNumber(),  account.getFirstName(), account.getMiddleName(), account.getLastName(), account.getMobileNumber(), account.getAge(), account.getBalance(), account.getEmail(), maskAadhar(account.getAadharNumber()), maskPan(account.getPanNumber()), account.getAccountType(), account.getCreditLimit(), account.isActive());
+        return new AccountResponseDto(account.getId(), account.getAccountNumber(), account.getFirstName(), account.getMiddleName(), account.getLastName(), account.getMobileNumber(), account.getAge(), account.getBalance(), account.getEmail(), maskAadhar(account.getAadharNumber()), maskPan(account.getPanNumber()), account.getAccountType(), account.getCreditLimit(), account.isActive());
     }
 
     private String maskAadhar(String aadhar) {
